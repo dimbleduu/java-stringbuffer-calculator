@@ -1,4 +1,4 @@
-a calculator that inputs and outputs a java stringbuilder
+a calculator that inputs and outputs a java stringbuffer
 I wanted to try making a calculator that would accept and calculate big numbers in detail
 
 currently only accepts positive integer
