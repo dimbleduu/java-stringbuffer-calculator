@@ -1,6 +1,7 @@
 package src;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Calculator {
@@ -13,49 +14,46 @@ public class Calculator {
         try {
             int character;
 
-            FileReader read1 = new FileReader("text_file\\input1.txt");
-            FileReader read2 = new FileReader("text_file\\input2.txt");
-
-            while ( (character = read1.read())!=-1) { 
+            FileReader read = new FileReader("text_file\\input1.txt");
+            while ( (character = read.read())!=-1) { 
                 input1.append((char) character);
             }
-            while ( (character = read2.read())!=-1) { 
+            read.close();
+
+            read  = new FileReader("text_file\\input2.txt");
+            while ( (character = read.read())!=-1) { 
                 input2.append((char) character);
             }
-
-            read1.close();
-            read2.close();
-        } catch (Exception ex) {
+            read.close();
+        } catch (IOException ex) {
             ex.printStackTrace();
             System.out.println("something's wrong");
         }
 
         Scanner equations = new Scanner(System.in);
 
-        StringBuffer output = null;
+         StringBuffer output = null;
 
-        System.out.println("type in the equations symbol you want to do [+]");
+        System.out.println("type in the equations symbol you want to do [+ *]");
+
         switch (equations.nextLine().charAt(0)) {
-            case '+':
-                output = Plus(input1, input2);
-                break;
-            default:
-                System.out.println("nothing found");
+            case '+' -> output = Plus(input1, input2);
+            case '*' -> output = Multiply(input1, input2);
+            default -> System.out.println("nothing found");
         }
+        
         equations.close();
     
         try {
-            FileWriter overwriteOutput = new FileWriter("text_file\\output.txt");
-            FileWriter appendOutput = new FileWriter("text_file\\output.txt", true);
+            FileWriter fwOutput = new FileWriter("text_file\\output.txt");
             
-            overwriteOutput.write(output.charAt(0));
+            fwOutput.write(output.charAt(0));
             
             for(int i=1; i<output.length();i++){
-                appendOutput.write(output.charAt(i));
+                fwOutput.append(output.charAt(i));
             }
 
-            overwriteOutput.close();
-            appendOutput.close();
+            fwOutput.close();
         } catch (Exception ex) {
         }
     }
@@ -106,7 +104,7 @@ public class Calculator {
 
 
     private static StringBuffer Multiply(StringBuffer input1, StringBuffer input2){
-        StringBuffer output = new StringBuffer();
+        StringBuffer output = new StringBuffer("0");
 
             
         /*  idea, minus the last char by one till 0; once 0 check the left if 0;
@@ -114,8 +112,41 @@ public class Calculator {
             if left is 0 check the left of that char again until reaching charAt(0);
             once all letters is 0 then return output
         */
+        int i1Length;
 
+        boolean continueCount = true;
+        while (continueCount) {
+            i1Length = input1.length();
+            
+            int last = input1.charAt(i1Length-1);
 
+            if(input1.charAt(input1.length()-1) != '0'){
+                output = Plus(output, input2);
+
+                input1.replace(i1Length-1, i1Length, ""+ (char) (last - 1));
+            }
+
+            while (input1.charAt(i1Length-1) == '0') {
+     
+                i1Length-=1;
+                if ((input1.charAt(0)=='0' && i1Length==0)) {
+                    continueCount=false;
+                    break;
+                }
+                if (input1.charAt(i1Length-1) != '0') {
+                    input1.replace(i1Length-1, i1Length, ""+ (char) (input1.charAt(i1Length-1) - 1));
+                    output = Plus(output, input2);
+
+                    int counter = input1.length()- i1Length;
+                    input1.delete(i1Length, input1.length());
+                    for(int i=0; i<counter; i++){
+                        input1.append('9');
+                    }
+                    break;
+                }
+            }
+            System.out.println(output);
+        }
 
         return output;
     }
