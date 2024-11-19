@@ -14,4 +14,4 @@ the output is in text_file/output
 equations :
 
 + -> addition
-* -> multiplication (note, for what I wanted it to be multiplication for now seems to be quite slow)
+* -> multiplication
