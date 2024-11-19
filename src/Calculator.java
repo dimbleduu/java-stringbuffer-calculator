@@ -104,49 +104,82 @@ public class Calculator {
 
 
     private static StringBuffer Multiply(StringBuffer input1, StringBuffer input2){
-        StringBuffer output = new StringBuffer("0");
+        StringBuffer output = new StringBuffer();
 
             
-        /*  idea, minus the last char by one till 0; once 0 check the left if 0;
-            if left is not 0 turn last char to 9 use plus();
-            if left is 0 check the left of that char again until reaching charAt(0);
-            once all letters is 0 then return output
+        /*  
+        take the last char of a smaller string, multiply with all of the digits in the bigger string
+        put in output
+        then, do the same thing again, put in output index-1 while, if there is a digit in the specified 
+        output index then add them together
+
+        idea, idk what this method of multiplication is called
+                    11
+                    11 
+                    __ x
+                    11
+                   11  
+                   ___ +
+                   121 
         */
-        int i1Length;
+
+
+        // determines which is the bigger number
+        byte select = 0;
+        StringBuffer[] bORs = {input1, input2};
+        if(input1.length()<input2.length()){
+            select = 1;
+        }
+
+        int biggerStr = bORs[(0 + select) % 2].length();
+        int smallerStr = bORs[(1 + select) % 2].length();
 
         boolean continueCount = true;
+
+        byte overMult = 0; //carry num after multiplication
+        byte overPlus = 0; //carry num after addition
+        byte dgtResult = 0;
+
         while (continueCount) {
-            i1Length = input1.length();
             
-            int last = input1.charAt(i1Length-1);
+            int icount = bORs[(1 + select) % 2].length() - smallerStr;
+            icount = output.length()-icount;
 
-            if(input1.charAt(input1.length()-1) != '0'){
-                output = Plus(output, input2);
+            for(int i=biggerStr-1; i>=0; i--){
 
-                input1.replace(i1Length-1, i1Length, ""+ (char) (last - 1));
-            }
+                dgtResult = (byte) (bORs[(0 + select) % 2].charAt(i)-48);
+                dgtResult = (byte) (dgtResult * (bORs[(1 + select) % 2].charAt(smallerStr-1)-48));
+                dgtResult += overMult;
+                overMult = (byte) (dgtResult/10);
 
-            while (input1.charAt(i1Length-1) == '0') {
-     
-                i1Length-=1;
-                if ((input1.charAt(0)=='0' && i1Length==0)) {
-                    continueCount=false;
-                    break;
-                }
-                if (input1.charAt(i1Length-1) != '0') {
-                    input1.replace(i1Length-1, i1Length, ""+ (char) (input1.charAt(i1Length-1) - 1));
-                    output = Plus(output, input2);
+                dgtResult %= 10;
 
-                    int counter = input1.length()- i1Length;
-                    input1.delete(i1Length, input1.length());
-                    for(int i=0; i<counter; i++){
-                        input1.append('9');
+                if(smallerStr == bORs[(1 + select) % 2].length()){
+                    output.insert(0, dgtResult);
+                    if(overMult!=0){
+                        output.insert(0, overMult);
                     }
-                    break;
+                }
+                else if(icount==0){
+                    output.insert(0, dgtResult+overPlus);
+                }
+                else{
+                    byte plusResult = (byte) ((output.charAt(icount-1)-48)+dgtResult);
+                    overPlus = (byte) (plusResult/10);
+                    plusResult %= 10;
+                    output.replace(icount-1, icount, ""+plusResult);
+                    icount--;
                 }
             }
-            System.out.println(output);
+
+            smallerStr -= 1;
+
+            if(smallerStr-1 == -1){
+                continueCount = false;
+                break;
+            }
         }
+
 
         return output;
     }
