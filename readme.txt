@@ -1,5 +1,5 @@
-a calculator that inputs and outputs a java stringbuilder
-I wanted to try making a calculator that would accept and calculate big numbers in detail
+a calculator that inputs and outputs a java stringbuffer
+I wanted to try making a calculator that would accept and calculate big numbers in detail (without .e, or 10^x)
 
 currently only accepts positive integer
 
@@ -14,4 +14,4 @@ the output is in text_file/output
 equations :
 
 + -> addition
-* -> multiplication
+* -> multiplication (note, for what I wanted it to be multiplication for now seems to be quite slow)
